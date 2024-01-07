@@ -1,5 +1,6 @@
 package com.littlelemon.menu
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -14,6 +15,8 @@ import kotlinx.coroutines.flow.update
 
 class MainActivity : ComponentActivity() {
 
+    /*
+    version-00:
     val productsList = mutableListOf(
         ProductItem("Black tea", 3.00, "Drinks", R.drawable.black_tea),
         ProductItem("Green tea", 3.00, "Drinks", R.drawable.green_tea),
@@ -30,6 +33,9 @@ class MainActivity : ComponentActivity() {
         ProductItem("Custard tart", 14.00, "Dessert", R.drawable.custard_tart),
         ProductItem("Croissant", 7.00, "Dessert", R.drawable.croissant),
     )
+     */
+    // version-01 [task-01]:
+    val productsList = ProductsWarehouse.productsList
 
     private val productsState: MutableStateFlow<Products> =
         MutableStateFlow(Products(productsList))
@@ -42,11 +48,19 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun InitUI() {
         val products by productsState.collectAsState()
-        ProductsGrid(products = products)
+        // task-04
+        ProductsGrid(products = products, this::startProductActivity)
     }
 
     private fun startProductActivity(productItem: ProductItem) {
         //TODO instantiate intent and pass extra parameter from product
+        // task-02 and task-03: In Object declaration, see Activities with arguments.
+        val intent : Intent = Intent(this, ProductActivity::class.java)
+        intent.putExtra(ProductActivity.KEY_TITLE, productItem.title)
+        intent.putExtra(ProductActivity.KEY_PRICE, productItem.price)
+        intent.putExtra(ProductActivity.KEY_IMAGE, productItem.image)
+        intent.putExtra(ProductActivity.KEY_CATEGORY, productItem.category)
+        startActivity(intent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
